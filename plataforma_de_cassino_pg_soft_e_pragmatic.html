@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Plataforma de Apostas & Cassino Online</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark: '#06170c',
+              card: '#0e2b17',
+              header: '#0b2413',
+              accent: '#22c55e',
+              gold: '#fbbf24',
+              goldDark: '#d97706',
+              red: '#ef4444',
+              border: '#174023'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #030a05;
+      color: #ffffff;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .gold-gradient-text {
+      background: linear-gradient(180deg, #ffe885 0%, #f5b800 50%, #c48200 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-button-bg {
+      background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
+    }
+    .green-button-bg {
+      background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+    }
+    .card-gradient {
+      background: linear-gradient(180deg, #133a1e 0%, #091f10 100%);
+    }
+    @keyframes reelSpin {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+    .spinning {
+      animation: reelSpin 0.15s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-black flex justify-center items-center min-h-screen">
+
+  <!-- Mobile Simulator Container -->
+  <div id="appContainer" class="w-full max-w-md bg-[#071c0d] min-h-screen flex flex-col justify-between relative overflow-hidden shadow-2xl border-x border-brand-border">
+
+    <!-- TOP HEADER -->
+    <header class="bg-[#0b2413] px-4 py-3 flex items-center justify-between sticky top-0 z-30 border-b border-brand-border">
+      <div class="flex items-center gap-3">
+        <button onclick="switchTab('home')" class="text-white text-xl focus:outline-none active:scale-95 transition">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <!-- Dynamic Logo -->
+        <div id="displaySiteLogo" class="font-black text-2xl tracking-italic italic gold-gradient-text cursor-pointer" onclick="switchTab('home')">
+          7359.com
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Balance Display -->
+        <div class="bg-[#06140b] border border-amber-500/30 rounded-full px-3 py-1 flex items-center gap-1.5 shadow-inner">
+          <span class="text-xs text-amber-400 font-semibold">R$</span>
+          <span id="userBalance" class="text-sm font-bold text-white">4,76</span>
+          <button onclick="refreshBalance()" class="text-xs text-gray-400 hover:text-white transition ml-1">
+            <i id="refreshIcon" class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+
+        <!-- Quick Deposit Header Button -->
+        <button onclick="switchTab('deposit')" class="bg-amber-500 hover:bg-amber-400 text-black p-2 rounded-full font-bold flex items-center justify-center h-8 w-8 shadow-lg active:scale-95 transition">
+          <i class="fa-solid fa-piggy-bank"></i>
+        </button>
+
+        <button onclick="toggleConfigModal()" class="text-gray-400 hover:text-white p-1 text-lg">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <main class="flex-1 overflow-y-auto scrollbar-hide pb-20">
+
+      <!-- TAB 1: HOME / INÍCIO -->
+      <section id="tab-home" class="space-y-4">
+        <!-- Main Promo Banner -->
+        <div class="px-3 pt-3">
+          <div class="relative rounded-2xl overflow-hidden card-gradient border border-amber-500/30 p-4 shadow-xl">
+            <div class="flex justify-between items-center">
+              <div class="space-y-1 max-w-[68%]">
+                <span class="bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider">Bônus Exclusivo</span>
+                <h2 class="text-xl font-black text-amber-300 leading-tight">5% DE COMISSÃO</h2>
+                <p class="text-xs text-gray-200 font-medium">RENDA MENSAL FÁCIL</p>
+                <p class="text-xl font-black text-amber-400">R$ 1.000.000</p>
+                <button onclick="switchTab('promos')" class="mt-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-xs font-black px-4 py-1.5 rounded-lg shadow active:scale-95 transition">
+                  PARTICIPAR AGORA
+                </button>
+              </div>
+              <div class="text-6xl text-amber-400 opacity-90 drop-shadow-md">
+                <i class="fa-solid fa-gem"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="px-3 space-y-2">
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input type="text" id="gameSearchInput" oninput="handleSearch()" placeholder="Pesquisar jogos (Ex: Tiger, Olympus...)" class="w-full bg-[#0b2413] border border-brand-border rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <!-- Category Buttons -->
+          <div class="flex gap-2 overflow-x-auto scrollbar-hide py-1">
+            <button onclick="filterCategory('all')" id="cat-btn-all" class="cat-btn bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5 active:scale-95 transition">
+              <i class="fa-solid fa-fire text-amber-300"></i> Todos os Jogos
+            </button>
+            <button onclick="filterCategory('pg')" id="cat-btn-pg" class="cat-btn bg-[#0e2b17] text-gray-300 font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5 border border-brand-border hover:bg-emerald-800 transition">
+              <i class="fa-solid fa-bolt text-amber-400"></i> PG Soft
+            </button>
+            <button onclick="filterCategory('pragmatic')" id="cat-btn-pragmatic" class="cat-btn bg-[#0e2b17] text-gray-300 font-bold px-4 py-2 rounded-xl text-xs whitespace-nowrap flex items-center gap-1.5 border border-brand-border hover:bg-emerald-800 transition">
+              <i class="fa-solid fa-crown text-amber-400"></i> Pragmatic Play
+            </button>
+          </div>
+        </div>
+
+        <!-- Announcement Marquee -->
+        <div class="mx-3 bg-[#081f0f] border border-brand-border rounded-xl px-3 py-1.5 flex items-center gap-2 text-xs text-amber-300">
+          <i class="fa-solid fa-volume-high text-amber-400 animate-pulse"></i>
+          <div class="overflow-hidden whitespace-nowrap w-full">
+            <div class="inline-block animate-[marquee_12s_linear_infinite]">
+              Prezado usuário, bem-vindo ao <span id="marqueeSiteName">7359.com</span>! Bônus de depósitos via PIX até 100%! Teste os slots PG e Pragmatic!
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO 1: PG SOFT GAMES -->
+        <div id="section-pg" class="px-3 space-y-2">
+          <div class="flex justify-between items-center px-1">
+            <span class="text-sm font-black text-white flex items-center gap-2">
+              <span class="bg-amber-500 text-black text-[10px] px-1.5 py-0.5 rounded font-black">PG</span> PG Soft Games
+            </span>
+            <span onclick="filterCategory('pg')" class="text-xs text-amber-400 font-semibold cursor-pointer">Ver Todos</span>
+          </div>
+
+          <div id="pgGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <!-- PG Games Cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- SEÇÃO 2: PRAGMATIC PLAY GAMES -->
+        <div id="section-pragmatic" class="px-3 space-y-2 pt-2">
+          <div class="flex justify-between items-center px-1">
+            <span class="text-sm font-black text-white flex items-center gap-2">
+              <span class="bg-orange-500 text-black text-[10px] px-1.5 py-0.5 rounded font-black">PRAGMATIC</span> Pragmatic Play
+            </span>
+            <span onclick="filterCategory('pragmatic')" class="text-xs text-amber-400 font-semibold cursor-pointer">Ver Todos</span>
+          </div>
+
+          <div id="pragmaticGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <!-- Pragmatic Games Cards injected by JS -->
+          </div>
+        </div>
+
+        <!-- Social Media Community Cards -->
+        <div class="px-3 space-y-2 pt-2">
+          <a href="#" onclick="alert('Redirecionando para o Canal Telegram!')" class="block bg-gradient-to-r from-sky-600 to-blue-700 p-3.5 rounded-2xl border border-sky-400/30 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+              <i class="fa-brands fa-telegram text-3xl text-white"></i>
+              <div>
+                <div class="font-black text-white text-sm">CANAL TELEGRAM</div>
+                <div class="text-[10px] text-sky-100">Códigos e bônus diários de resgate</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-white text-xs"></i>
+          </a>
+
+          <a href="#" onclick="alert('Redirecionando para o Suporte WhatsApp!')" class="block bg-gradient-to-r from-emerald-600 to-green-700 p-3.5 rounded-2xl border border-emerald-400/30 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+              <i class="fa-brands fa-whatsapp text-3xl text-white"></i>
+              <div>
+                <div class="font-black text-white text-sm">GRUPO WHATSAPP</div>
+                <div class="text-[10px] text-green-100">Atendimento 24/7 e Sinais de Slots</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-white text-xs"></i>
+          </a>
+        </div>
+      </section>
+
+      <!-- TAB 2: PROMOÇÃO -->
+      <section id="tab-promos" class="hidden p-4 space-y-4">
+        <h1 class="text-lg font-black text-amber-400 flex items-center gap-2">
+          <i class="fa-solid fa-gift"></i> Central de Promoções
+        </h1>
+
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-4 space-y-3 shadow-lg">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="bg-amber-500 text-black text-[10px] font-black px-2 py-0.5 rounded">RECOMENDADO</span>
+              <h3 class="font-extrabold text-white text-base mt-1">Convide Amigos & Ganhe R$ 30</h3>
+              <p class="text-xs text-gray-300">Ganhe bônus em dinheiro diretamente para cada amigo cadastrado.</p>
+            </div>
+            <div class="text-3xl text-amber-400"><i class="fa-solid fa-user-plus"></i></div>
+          </div>
+          <div class="bg-[#06170c] p-2.5 rounded-xl flex items-center justify-between border border-brand-border">
+            <span class="text-xs text-gray-400 font-mono" id="referralCode">https://7359.com/ref?u=43342241</span>
+            <button onclick="copyRefLink()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-lg transition">Copiar</button>
+          </div>
+        </div>
+
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-4 space-y-3 shadow-lg">
+          <h3 class="font-extrabold text-white text-base flex items-center gap-2">
+            <i class="fa-solid fa-ticket text-amber-400"></i> Código de Resgate / Gift Code
+          </h3>
+          <p class="text-xs text-gray-300">Insira seu código promocional para resgatar bônus instantâneo.</p>
+          <div class="flex gap-2">
+            <input type="text" id="promoCodeInput" placeholder="Ex: BONUS888" class="flex-1 bg-[#06170c] border border-brand-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500 uppercase">
+            <button onclick="claimPromoCode()" class="gold-button-bg text-black font-extrabold text-xs px-4 py-2 rounded-xl shadow active:scale-95 transition">RESGATAR</button>
+          </div>
+          <p class="text-[10px] text-amber-400/80">Código para teste: <span class="font-bold underline">BONUS888</span></p>
+        </div>
+      </section>
+
+      <!-- TAB 3: DEPÓSITO -->
+      <section id="tab-deposit" class="hidden p-4 space-y-4">
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-4 space-y-4 shadow-lg">
+          <div class="flex items-center justify-between border-b border-brand-border pb-3">
+            <h2 class="text-base font-extrabold text-white flex items-center gap-2">
+              <i class="fa-solid fa-bolt text-teal-400"></i> Depósito Instantâneo PIX
+            </h2>
+            <span class="text-xs bg-teal-900/60 text-teal-300 px-2 py-0.5 rounded font-bold border border-teal-500/30">Taxa 0%</span>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-300 font-semibold mb-2 block">Selecione o valor do depósito:</label>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="setDepositAmount(20)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 20</button>
+              <button onclick="setDepositAmount(50)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 50</button>
+              <button onclick="setDepositAmount(100)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 100</button>
+              <button onclick="setDepositAmount(200)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 200</button>
+              <button onclick="setDepositAmount(500)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 500</button>
+              <button onclick="setDepositAmount(1000)" class="dep-val-btn bg-[#06170c] hover:bg-emerald-800 border border-brand-border text-amber-400 font-bold py-2.5 rounded-xl text-sm transition">R$ 1000</button>
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs text-gray-300 font-semibold mb-1 block">Valor personalizado (R$):</label>
+            <input type="number" id="depositInput" value="50" min="10" class="w-full bg-[#06170c] border border-brand-border rounded-xl px-3 py-2 text-white font-bold focus:outline-none focus:border-amber-500">
+          </div>
+
+          <button onclick="generatePIXModal()" class="w-full green-button-bg text-white font-black py-3 rounded-xl shadow-lg hover:opacity-90 active:scale-98 transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-qrcode text-lg"></i> GERAR PIX PARA PAGAMENTO
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 4: SAQUE -->
+      <section id="tab-withdraw" class="hidden p-4 space-y-4">
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-4 space-y-4 shadow-lg">
+          <h2 class="text-base font-extrabold text-white flex items-center gap-2 border-b border-brand-border pb-3">
+            <i class="fa-solid fa-money-bill-transfer text-amber-400"></i> Solicitar Saque PIX
+          </h2>
+
+          <div class="bg-[#06170c] p-3 rounded-xl border border-brand-border flex justify-between items-center">
+            <div>
+              <div class="text-xs text-gray-400">Saldo Disponível para Saque</div>
+              <div class="text-xl font-black text-amber-400">R$ <span class="user-balance-val">4,76</span></div>
+            </div>
+            <i class="fa-solid fa-wallet text-2xl text-emerald-500"></i>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs text-gray-300 block mb-1 font-semibold">Tipo de Chave PIX</label>
+              <select id="pixType" class="w-full bg-[#06170c] border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                <option value="cpf">CPF</option>
+                <option value="email">E-mail</option>
+                <option value="phone">Telefone / Celular</option>
+                <option value="key">Chave Aleatória</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs text-gray-300 block mb-1 font-semibold">Chave PIX Destino</label>
+              <input type="text" id="pixKeyInput" placeholder="Digite sua chave PIX..." class="w-full bg-[#06170c] border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+
+            <div>
+              <label class="text-xs text-gray-300 block mb-1 font-semibold">Valor do Saque (R$)</label>
+              <input type="number" id="withdrawAmount" placeholder="Mínimo R$ 10,00" class="w-full bg-[#06170c] border border-brand-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+            </div>
+          </div>
+
+          <button onclick="processWithdrawal()" class="w-full gold-button-bg text-black font-extrabold py-3 rounded-xl shadow hover:opacity-90 active:scale-98 transition">
+            CONFIRMAR SAQUE
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 5: PERFIL (Layout idêntico às imagens) -->
+      <section id="tab-profile" class="hidden p-4 space-y-4">
+        <!-- Profile Header Card -->
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-4 relative overflow-hidden shadow-lg">
+          <div class="flex items-center gap-3">
+            <div class="relative">
+              <img id="profileAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="w-16 h-16 rounded-xl object-cover border-2 border-amber-400">
+              <span class="absolute -top-1 -right-1 bg-amber-500 text-black font-black text-[9px] px-1.5 py-0.2 rounded-full border border-black">V5</span>
+            </div>
+
+            <div class="space-y-0.5 flex-1">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs text-gray-300">ID:</span>
+                <span id="displayUserId" class="text-xs font-bold text-white">43342241</span>
+                <button onclick="copyText('43342241')" class="text-gray-400 hover:text-white text-xs"><i class="fa-regular fa-copy"></i></button>
+                <span class="bg-gradient-to-r from-amber-600 to-amber-400 text-black font-black text-[10px] px-1.5 rounded ml-1">V5</span>
+              </div>
+              <div class="text-xs text-gray-400">
+                Conta: <span id="displayUserAccount" class="text-white font-medium">85982321159</span>
+              </div>
+              <div class="flex items-center gap-2 pt-1">
+                <span id="profileBalanceDisplay" class="text-xl font-black text-white">4,76 R$</span>
+                <button onclick="refreshBalance()" class="text-gray-400 text-sm"><i class="fa-solid fa-rotate-right"></i></button>
+              </div>
+            </div>
+
+            <button onclick="alert('Caixa de entrada: Você possui 2 novas notificações!')" class="relative text-emerald-400 text-2xl p-1">
+              <i class="fa-regular fa-envelope"></i>
+              <span class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">2</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 mt-4">
+            <button onclick="switchTab('withdraw')" class="green-button-bg text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow active:scale-95 transition">
+              <i class="fa-solid fa-download"></i> Saque
+            </button>
+            <button onclick="switchTab('deposit')" class="gold-button-bg text-black font-bold py-2.5 rounded-xl text-sm flex items-center justify-center gap-2 shadow active:scale-95 transition">
+              <i class="fa-solid fa-upload"></i> Depósito
+            </button>
+          </div>
+        </div>
+
+        <!-- VIP Progress Card -->
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl p-3.5 space-y-2 shadow-lg">
+          <div class="flex justify-between items-center text-xs">
+            <div class="flex items-center gap-1.5 font-bold">
+              <span class="bg-amber-500 text-black px-1.5 py-0.5 rounded text-[10px] font-black">V5</span>
+              <span class="text-gray-300">Siga <span class="text-amber-400">VIP6</span> Ainda precisa apostar 5.007,77</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+          </div>
+          <div class="relative w-full bg-[#06170c] rounded-full h-3.5 overflow-hidden border border-brand-border">
+            <div class="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full transition-all duration-500" style="width: 82%;"></div>
+            <span class="absolute inset-0 flex items-center justify-center text-[9px] font-black text-black drop-shadow">
+              54.992,23 / 60.000,00
+            </span>
+          </div>
+        </div>
+
+        <!-- Options Menu List -->
+        <div class="bg-[#0e2b17] border border-brand-border rounded-2xl overflow-hidden divide-y divide-brand-border shadow-lg">
+          <div onclick="alert('Relatórios carregados.')" class="p-3.5 flex items-center justify-between hover:bg-[#143e1d] cursor-pointer transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-base"><i class="fa-solid fa-file-invoice"></i></div>
+              <span class="text-xs font-bold text-white">Relatórios</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+          </div>
+
+          <div onclick="switchTab('promos')" class="p-3.5 flex items-center justify-between hover:bg-[#143e1d] cursor-pointer transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-base"><i class="fa-solid fa-user-plus"></i></div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-white">Convidar</span>
+                <span class="text-[10px] text-red-400 font-semibold">🔴 Convide 1 pessoa e ganhe R$30</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+          </div>
+
+          <div onclick="switchTab('promos')" class="p-3.5 flex items-center justify-between hover:bg-[#143e1d] cursor-pointer transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-base"><i class="fa-solid fa-puzzle-piece"></i></div>
+              <span class="text-xs font-bold text-white">Código de Resgate</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+          </div>
+
+          <div onclick="alert('Suporte Online 24/7 ativado.')" class="p-3.5 flex items-center justify-between hover:bg-[#143e1d] cursor-pointer transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-base"><i class="fa-solid fa-headset"></i></div>
+              <span class="text-xs font-bold text-white">Suporte</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="bg-red-600 text-white text-[10px] font-bold px-1.5 rounded-full">2</span>
+              <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+            </div>
+          </div>
+
+          <div onclick="logoutUser()" class="p-3.5 flex items-center justify-between hover:bg-[#143e1d] cursor-pointer transition">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center text-base"><i class="fa-solid fa-right-from-bracket"></i></div>
+              <span class="text-xs font-bold text-red-400">Sair</span>
+            </div>
+            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FIXED BOTTOM NAVIGATION BAR -->
+    <nav class="bg-[#0b2413] border-t border-brand-border fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-30 grid grid-cols-5 py-2 px-1 text-center shadow-2xl">
+      <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center justify-center text-amber-400 transition">
+        <i class="fa-solid fa-house text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Início</span>
+      </button>
+
+      <button onclick="switchTab('promos')" id="nav-promos" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+        <i class="fa-solid fa-gift text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Promoção</span>
+      </button>
+
+      <button onclick="switchTab('deposit')" id="nav-deposit" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+        <i class="fa-solid fa-sack-dollar text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Depósito</span>
+      </button>
+
+      <button onclick="switchTab('withdraw')" id="nav-withdraw" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-white transition">
+        <i class="fa-solid fa-wallet text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Saque</span>
+      </button>
+
+      <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-white transition relative">
+        <i class="fa-solid fa-user text-lg"></i>
+        <span class="text-[10px] font-medium mt-0.5">Perfil</span>
+        <span class="absolute top-0 right-4 w-2 h-2 bg-red-500 rounded-full"></span>
+      </button>
+    </nav>
+
+    <!-- MODAL: SLOT MACHINE GAME SIMULATOR -->
+    <div id="gameModal" class="fixed inset-0 bg-black/90 z-50 hidden flex flex-col justify-between items-center p-3 backdrop-blur-md">
+      <div class="w-full flex justify-between items-center border-b border-brand-border pb-2">
+        <div class="flex items-center gap-2">
+          <span id="currentGameTitle" class="font-bold text-amber-400 text-sm">Fortune Tiger</span>
+          <span id="currentGameProvider" class="bg-amber-500 text-black font-black text-[10px] px-2 py-0.5 rounded">PG SOFT</span>
+        </div>
+        <button onclick="closeGameModal()" class="text-gray-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Slot Machine Graphic UI -->
+      <div class="w-full my-auto max-w-xs bg-[#0e2b17] border-2 border-amber-500/50 rounded-2xl p-4 shadow-2xl flex flex-col items-center gap-4 relative">
+        <div class="text-center">
+          <span class="text-xs text-amber-300 font-extrabold uppercase tracking-widest">Ganho Máximo x2500</span>
+          <div id="slotWinDisplay" class="text-2xl font-black text-amber-400 h-8">FAÇA SUA APOSTA!</div>
+        </div>
+
+        <!-- 3x3 Reels Box -->
+        <div class="grid grid-cols-3 gap-2 bg-[#05140a] p-3 rounded-xl border border-emerald-900 w-full shadow-inner">
+          <div id="reel1" class="text-4xl h-20 bg-[#0c2615] rounded-lg flex items-center justify-center border border-emerald-800/40">🐯</div>
+          <div id="reel2" class="text-4xl h-20 bg-[#0c2615] rounded-lg flex items-center justify-center border border-emerald-800/40">🍊</div>
+          <div id="reel3" class="text-4xl h-20 bg-[#0c2615] rounded-lg flex items-center justify-center border border-emerald-800/40">💰</div>
+        </div>
+
+        <!-- Bet Controls -->
+        <div class="w-full flex items-center justify-between bg-[#06170c] p-2 rounded-xl border border-brand-border text-xs">
+          <span class="text-gray-400">Aposta:</span>
+          <div class="flex items-center gap-2">
+            <button onclick="adjustBet(-0.5)" class="w-6 h-6 bg-emerald-800 text-white rounded font-bold">-</button>
+            <span id="currentBetVal" class="font-bold text-amber-400">R$ 1.00</span>
+            <button onclick="adjustBet(0.5)" class="w-6 h-6 bg-emerald-800 text-white rounded font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- Spin Button -->
+        <button id="spinBtn" onclick="spinSlotMachine()" class="w-full py-3.5 gold-button-bg text-black font-black text-lg rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-rotate text-xl"></i> GIRAR
+        </button>
+      </div>
+
+      <div class="text-center text-[10px] text-gray-400">Gerador de Números Aleatórios (RNG) Certificado</div>
+    </div>
+
+    <!-- MODAL: PIX DEPOSIT SIMULATOR -->
+    <div id="pixModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-[#0e2b17] border border-amber-500/40 w-full max-w-xs rounded-2xl p-5 text-center space-y-4 shadow-2xl">
+        <h3 class="font-extrabold text-white text-base">Pagamento PIX Gerado!</h3>
+        <p class="text-xs text-gray-300">Valor: <span id="pixModalAmount" class="font-bold text-amber-400">R$ 50,00</span></p>
+        
+        <div class="bg-white p-3 rounded-xl inline-block shadow-lg border-2 border-amber-400">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=7359-CASINO-PIX-PAYMENT" alt="QR Code PIX" class="w-36 h-36">
+        </div>
+
+        <div class="bg-[#06170c] p-2 rounded-lg border border-brand-border text-[10px] text-gray-300 font-mono truncate">
+          00020126580014BR.GOV.BCB.PIX01367359-CASINO-DEMO-KEY
+        </div>
+
+        <div class="space-y-2">
+          <button onclick="simulatedApproveDeposit()" class="w-full green-button-bg text-white text-xs font-bold py-2.5 rounded-xl shadow active:scale-95 transition">
+            <i class="fa-solid fa-check-circle"></i> SIMULAR PAGAMENTO CONFIRMADO
+          </button>
+          <button onclick="closePixModal()" class="w-full bg-gray-800 text-gray-300 text-xs font-bold py-2 rounded-xl">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: CONFIGURAÇÕES DA PLATAFORMA -->
+    <div id="configModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-[#0e2b17] border border-brand-border w-full max-w-sm rounded-2xl p-5 space-y-4">
+        <div class="flex justify-between items-center border-b border-brand-border pb-2">
+          <h3 class="font-extrabold text-amber-400 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-sliders"></i> Painel de Configuração
+          </h3>
+          <button onclick="toggleConfigModal()" class="text-gray-400 text-lg"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+          <div>
+            <label class="text-gray-300 font-semibold block mb-1">Nome do Site:</label>
+            <input type="text" id="cfgSiteName" value="7359.com" class="w-full bg-[#06170c] border border-brand-border rounded px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="text-gray-300 font-semibold block mb-1">ID do Usuário:</label>
+            <input type="text" id="cfgUserId" value="43342241" class="w-full bg-[#06170c] border border-brand-border rounded px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="text-gray-300 font-semibold block mb-1">Número da Conta:</label>
+            <input type="text" id="cfgUserAccount" value="85982321159" class="w-full bg-[#06170c] border border-brand-border rounded px-3 py-2 text-white">
+          </div>
+          <div>
+            <label class="text-gray-300 font-semibold block mb-1">Saldo Inicial (R$):</label>
+            <input type="number" id="cfgUserBalance" value="4.76" step="0.01" class="w-full bg-[#06170c] border border-brand-border rounded px-3 py-2 text-white">
+          </div>
+        </div>
+
+        <button onclick="applyCustomConfig()" class="w-full gold-button-bg text-black font-extrabold py-2.5 rounded-xl text-xs shadow">
+          SALVAR CONFIGURAÇÕES
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT APP LOGIC -->
+  <script>
+    // System State
+    let state = {
+      siteName: "7359.com",
+      userId: "43342241",
+      userAccount: "85982321159",
+      balance: 4.76,
+      currentBet: 1.00,
+      activeTab: "home",
+      activeCategory: "all"
+    };
+
+    // 1. PG Soft Main Games Catalog with Real High-Quality Image Covers
+    const pgGames = [
+      { id: "tiger", name: "Fortune Tiger", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&auto=format&fit=crop&q=80", icon: "🐯" },
+      { id: "ox", name: "Fortune Ox", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop&q=80", icon: "🐂" },
+      { id: "rabbit", name: "Fortune Rabbit", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=400&auto=format&fit=crop&q=80", icon: "🐰" },
+      { id: "dragon", name: "Fortune Dragon", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1577493340887-b7bfff550145?w=400&auto=format&fit=crop&q=80", icon: "🐉" },
+      { id: "mouse", name: "Fortune Mouse", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&auto=format&fit=crop&q=80", icon: "🐭" },
+      { id: "snake", name: "Fortune Snake", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1531386151447-fd76ad50012f?w=400&auto=format&fit=crop&q=80", icon: "🐍" },
+      { id: "ganesha", name: "Ganesha Gold", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1567591403001-7598aca975ab?w=400&auto=format&fit=crop&q=80", icon: "🐘" },
+      { id: "pinata", name: "Pinata Wins", provider: "PG SOFT", image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400&auto=format&fit=crop&q=80", icon: "🪅" }
+    ];
+
+    // 2. Pragmatic Play Main Games Catalog with Real High-Quality Image Covers
+    const pragmaticGames = [
+      { id: "bonanza", name: "Sweet Bonanza", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?w=400&auto=format&fit=crop&q=80", icon: "🍬" },
+      { id: "gates", name: "Gates of Olympus", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=400&auto=format&fit=crop&q=80", icon: "⚡" },
+      { id: "starlight", name: "Starlight Princess", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&auto=format&fit=crop&q=80", icon: "👑" },
+      { id: "sugarrush", name: "Sugar Rush", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1527903789190-3649ad642357?w=400&auto=format&fit=crop&q=80", icon: "🍭" },
+      { id: "bigbass", name: "Big Bass Bonanza", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=400&auto=format&fit=crop&q=80", icon: "🐟" },
+      { id: "doghouse", name: "The Dog House", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&auto=format&fit=crop&q=80", icon: "🐶" },
+      { id: "wolfgold", name: "Wolf Gold", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=400&auto=format&fit=crop&q=80", icon: "🐺" },
+      { id: "destiny", name: "Madame Destiny Megaways", provider: "PRAGMATIC", image: "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?w=400&auto=format&fit=crop&q=80", icon: "🔮" }
+    ];
+
+    const slotSymbols = ["🐯", "🍊", "💰", "🧧", "💎", "⭐", "🍬", "⚡"];
+
+    window.onload = function() {
+      renderAllGames();
+      updateUI();
+    };
+
+    // Render Games Grid with Image Covers
+    function renderGamesList(containerId, list) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      list.forEach(game => {
+        const card = document.createElement('div');
+        card.className = "bg-[#0e2b17] border border-amber-500/30 rounded-xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition relative group flex flex-col justify-between";
+        card.onclick = () => openGameModal(game.name, game.provider);
+
+        card.innerHTML = `
+          <div class="relative h-28 w-full overflow-hidden">
+            <img src="${game.image}" alt="${game.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/400x300/12301b/fbbf24?text=${encodeURIComponent(game.name)}'">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0e2b17] via-transparent to-transparent"></div>
+            <span class="absolute top-1.5 right-1.5 ${game.provider === 'PG SOFT' ? 'bg-amber-500 text-black' : 'bg-orange-500 text-black'} font-black text-[9px] px-1.5 py-0.2 rounded shadow">
+              ${game.provider}
+            </span>
+            <div class="absolute bottom-1 left-2 text-2xl drop-shadow">${game.icon}</div>
+          </div>
+          <div class="p-2 text-center bg-[#0a2312]">
+            <div class="font-extrabold text-white text-xs truncate">${game.name}</div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderAllGames() {
+      renderGamesList('pgGamesGrid', pgGames);
+      renderGamesList('pragmaticGamesGrid', pragmaticGames);
+    }
+
+    // Category Filter Handler
+    function filterCategory(cat) {
+      state.activeCategory = cat;
+      const secPg = document.getElementById('section-pg');
+      const secPragmatic = document.getElementById('section-pragmatic');
+
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.remove('bg-emerald-600', 'text-white');
+        btn.classList.add('bg-[#0e2b17]', 'text-gray-300');
+      });
+
+      if(cat === 'pg') {
+        secPg.classList.remove('hidden');
+        secPragmatic.classList.add('hidden');
+        document.getElementById('cat-btn-pg').classList.add('bg-emerald-600', 'text-white');
+      } else if(cat === 'pragmatic') {
+        secPg.classList.add('hidden');
+        secPragmatic.classList.remove('hidden');
+        document.getElementById('cat-btn-pragmatic').classList.add('bg-emerald-600', 'text-white');
+      } else {
+        secPg.classList.remove('hidden');
+        secPragmatic.classList.remove('hidden');
+        document.getElementById('cat-btn-all').classList.add('bg-emerald-600', 'text-white');
+      }
+    }
+
+    // Search Handler
+    function handleSearch() {
+      const term = document.getElementById('gameSearchInput').value.toLowerCase();
+      
+      const filteredPg = pgGames.filter(g => g.name.toLowerCase().includes(term));
+      const filteredPragmatic = pragmaticGames.filter(g => g.name.toLowerCase().includes(term));
+
+      renderGamesList('pgGamesGrid', filteredPg);
+      renderGamesList('pragmaticGamesGrid', filteredPragmatic);
+    }
+
+    // Tab Switcher
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      const tabs = ['home', 'promos', 'deposit', 'withdraw', 'profile'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        if(t === tabId) {
+          el.classList.remove('hidden');
+          if(navBtn) {
+            navBtn.classList.add('text-amber-400');
+            navBtn.classList.remove('text-gray-400');
+          }
+        } else {
+          el.classList.add('hidden');
+          if(navBtn) {
+            navBtn.classList.remove('text-amber-400');
+            navBtn.classList.add('text-gray-400');
+          }
+        }
+      });
+    }
+
+    // Update UI elements
+    function updateUI() {
+      const formattedBalance = state.balance.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('userBalance').innerText = formattedBalance;
+      document.getElementById('profileBalanceDisplay').innerText = `${formattedBalance} R$`;
+      
+      document.querySelectorAll('.user-balance-val').forEach(el => el.innerText = formattedBalance);
+
+      document.getElementById('displaySiteLogo').innerText = state.siteName;
+      document.getElementById('marqueeSiteName').innerText = state.siteName;
+      document.getElementById('displayUserId').innerText = state.userId;
+      document.getElementById('displayUserAccount').innerText = state.userAccount;
+    }
+
+    function refreshBalance() {
+      const icon = document.getElementById('refreshIcon');
+      icon.classList.add('animate-spin');
+      setTimeout(() => icon.classList.remove('animate-spin'), 600);
+    }
+
+    // Interactive Slot Game Modal
+    function openGameModal(title, provider) {
+      document.getElementById('currentGameTitle').innerText = title;
+      document.getElementById('currentGameProvider').innerText = provider;
+      document.getElementById('slotWinDisplay').innerText = "FAÇA SUA APOSTA!";
+      document.getElementById('slotWinDisplay').className = "text-2xl font-black text-amber-400 h-8";
+      document.getElementById('gameModal').classList.remove('hidden');
+    }
+
+    function closeGameModal() {
+      document.getElementById('gameModal').classList.add('hidden');
+    }
+
+    function adjustBet(val) {
+      if(state.currentBet + val >= 0.50) {
+        state.currentBet += val;
+        document.getElementById('currentBetVal').innerText = `R$ ${state.currentBet.toFixed(2)}`;
+      }
+    }
+
+    function spinSlotMachine() {
+      if(state.balance < state.currentBet) {
+        alert("Saldo insuficiente! Faça um depósito via PIX para continuar jogando.");
+        return;
+      }
+
+      state.balance -= state.currentBet;
+      updateUI();
+
+      const btn = document.getElementById('spinBtn');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+
+      const r1 = document.getElementById('reel1');
+      const r2 = document.getElementById('reel2');
+      const r3 = document.getElementById('reel3');
+
+      r1.classList.add('spinning');
+      r2.classList.add('spinning');
+      r3.classList.add('spinning');
+
+      document.getElementById('slotWinDisplay').innerText = "GIRANDO...";
+      document.getElementById('slotWinDisplay').className = "text-xl font-bold text-gray-300 h-8";
+
+      setTimeout(() => {
+        r1.classList.remove('spinning');
+        const s1 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+        r1.innerText = s1;
+
+        setTimeout(() => {
+          r2.classList.remove('spinning');
+          const s2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+          r2.innerText = s2;
+
+          setTimeout(() => {
+            r3.classList.remove('spinning');
+            
+            const isWin = Math.random() < 0.45;
+            let s3;
+            if(isWin) {
+              s3 = s1;
+              r2.innerText = s1;
+            } else {
+              s3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            }
+            r3.innerText = s3;
+
+            if(r1.innerText === r2.innerText && r2.innerText === r3.innerText) {
+              const prize = state.currentBet * 5;
+              state.balance += prize;
+              updateUI();
+              document.getElementById('slotWinDisplay').innerText = `GANHOU R$ ${prize.toFixed(2)}! 🎉`;
+              document.getElementById('slotWinDisplay').className = "text-2xl font-black text-emerald-400 animate-bounce h-8";
+            } else {
+              document.getElementById('slotWinDisplay').innerText = "TENTE NOVAMENTE!";
+              document.getElementById('slotWinDisplay').className = "text-lg font-bold text-red-400 h-8";
+            }
+
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+          }, 200);
+        }, 200);
+      }, 400);
+    }
+
+    // PIX Deposit Logic
+    function setDepositAmount(val) {
+      document.getElementById('depositInput').value = val;
+    }
+
+    function generatePIXModal() {
+      const val = parseFloat(document.getElementById('depositInput').value);
+      if(!val || val < 10) {
+        alert("O valor mínimo de depósito é R$ 10,00.");
+        return;
+      }
+      document.getElementById('pixModalAmount').innerText = `R$ ${val.toFixed(2)}`;
+      document.getElementById('pixModal').classList.remove('hidden');
+    }
+
+    function closePixModal() {
+      document.getElementById('pixModal').classList.add('hidden');
+    }
+
+    function simulatedApproveDeposit() {
+      const val = parseFloat(document.getElementById('depositInput').value);
+      state.balance += val;
+      updateUI();
+      closePixModal();
+      alert(`Depósito PIX de R$ ${val.toFixed(2)} aprovado com sucesso!`);
+    }
+
+    // Withdrawal Logic
+    function processWithdrawal() {
+      const key = document.getElementById('pixKeyInput').value;
+      const amt = parseFloat(document.getElementById('withdrawAmount').value);
+
+      if(!key) {
+        alert("Digite sua chave PIX.");
+        return;
+      }
+      if(!amt || amt < 10) {
+        alert("Valor mínimo de saque é R$ 10,00.");
+        return;
+      }
+      if(amt > state.balance) {
+        alert("Saldo insuficiente para saque.");
+        return;
+      }
+
+      state.balance -= amt;
+      updateUI();
+      alert(`Saque de R$ ${amt.toFixed(2)} enviado para processamento PIX!`);
+      document.getElementById('withdrawAmount').value = '';
+    }
+
+    // Promo Code
+    function claimPromoCode() {
+      const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+      if(code === "BONUS888") {
+        state.balance += 50.00;
+        updateUI();
+        alert("Bônus de R$ 50,00 resgatado com sucesso!");
+        document.getElementById('promoCodeInput').value = '';
+      } else {
+        alert("Código inválido ou expirado.");
+      }
+    }
+
+    function copyRefLink() {
+      const refText = document.getElementById('referralCode').innerText;
+      navigator.clipboard.writeText(refText);
+      alert("Link de indicação copiado!");
+    }
+
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt);
+      alert(`Copiado: ${txt}`);
+    }
+
+    // Settings Panel
+    function toggleConfigModal() {
+      document.getElementById('configModal').classList.toggle('hidden');
+    }
+
+    function applyCustomConfig() {
+      state.siteName = document.getElementById('cfgSiteName').value;
+      state.userId = document.getElementById('cfgUserId').value;
+      state.userAccount = document.getElementById('cfgUserAccount').value;
+      state.balance = parseFloat(document.getElementById('cfgUserBalance').value) || 0;
+      
+      updateUI();
+      toggleConfigModal();
+    }
+
+    function logoutUser() {
+      alert("Sessão finalizada.");
+      location.reload();
+    }
+  </script>
+</body>
+</html>
