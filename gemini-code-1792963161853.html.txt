@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #05050f;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        /* Fundo de estrelas */
+        #canvas-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Galáxia / Buraco negro central */
+        .galaxy-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .black-hole {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(150,200,255,0.8) 30%, rgba(20,20,40,0.9) 60%, rgba(0,0,0,1) 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px 15px rgba(200, 220, 255, 0.4);
+            animation: rotateGalaxy 10s linear infinite;
+        }
+
+        @keyframes rotateGalaxy {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Coração de texto no topo */
+        .heart-title {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 3;
+            font-size: 2rem;
+            color: #ffb6c1;
+            text-shadow: 0 0 15px rgba(255, 182, 193, 0.8);
+            font-weight: bold;
+            animation: pulseHeart 2s infinite alternate;
+        }
+
+        @keyframes pulseHeart {
+            0% { transform: translateX(-50%) scale(1); text-shadow: 0 0 10px rgba(255,182,193,0.6); }
+            100% { transform: translateX(-50%) scale(1.08); text-shadow: 0 0 25px rgba(255,182,193,1); }
+        }
+
+        /* Frases "Eu te amo" flutuantes espalhadas */
+        .floating-text {
+            position: absolute;
+            z-index: 3;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 192, 203, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 192, 203, 0.3);
+            animation: floatAround 6s ease-in-out infinite alternate;
+            user-select: none;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .floating-text:hover {
+            transform: scale(1.2);
+            color: #fff;
+            background: rgba(255, 105, 180, 0.4);
+        }
+
+        @keyframes floatAround {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-15px) rotate(3deg); }
+        }
+
+        /* Código decorativo inferior (igual ao vídeo) */
+        .code-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111b21;
+            border: 1px solid #22303c;
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #00ffcc;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 350px;
+        }
+
+        .code-header {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+    </style>
+</head>
+<body>
+
+    <!-- Fundo de Estrelas Animadas -->
+    <canvas id="canvas-stars"></canvas>
+
+    <!-- Título de Coração -->
+    <div class="heart-title">Te amo ❤️</div>
+
+    <!-- Buraco Negro / Galáxia Central -->
+    <div class="galaxy-container">
+        <div class="black-hole"></div>
+    </div>
+
+    <!-- Vários "Eu te amo" espalhados pela tela -->
+    <div class="floating-text" style="top: 25%; left: 15%; animation-delay: 0s;">Eu te amo</div>
+    <div class="floating-text" style="top: 30%; right: 18%; animation-delay: 1s;">EU TE AMO</div>
+    <div class="floating-text" style="top: 50%; left: 8%; animation-delay: 2s;">Te amo muito</div>
+    <div class="floating-text" style="top: 65%; right: 12%; animation-delay: 1.5s;">Sempre eu te amo</div>
+    <div class="floating-text" style="top: 75%; left: 20%; animation-delay: 0.5s;">Meu amor, eu te amo</div>
+    <div class="floating-text" style="top: 45%; right: 15%; animation-delay: 2.5s;">Te amo ❤️</div>
+    <div class="floating-text" style="top: 20%; left: 40%; animation-delay: 1.8s;">Para sempre eu te amo</div>
+    <div class="floating-text" style="bottom: 25%; left: 35%; animation-delay: 1.2s;">Eu te amo demais</div>
+
+    <!-- Bloco de código estético idêntico ao vídeo -->
+    <div class="code-box">
+        <div class="code-header">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+        </div>
+        <code>
+            .Para_Ti {<br>
+            &nbsp;&nbsp;position: absolute;<br>
+            &nbsp;&nbsp;width: 90%;<br>
+            &nbsp;&nbsp;font-size: 2rem;<br>
+            &nbsp;&nbsp;font-family: "Te Amo";<br>
+            }
+        </code>
+    </div>
+
+    <script>
+        // Script para gerar as estrelas no fundo dinamicamente
+        const canvas = document.getElementById('canvas-stars');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const stars = [];
+        const numStars = 150;
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.5,
+                alpha: Math.random(),
+                speed: Math.random() * 0.02 + 0.005
+            });
+        }
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            
+            stars.forEach(star => {
+                ctx.globalAlpha = star.alpha;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Efeito de brilho piscando
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0.2) {
+                    star.speed = -star.speed;
+                }
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        animateStars();
+    </script>
+</body>
+</html>
