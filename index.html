@@ -15,14 +15,13 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #05050f;
-            font-family: 'Arial', sans-serif;
-            color: #fff;
+            background-color: #030208;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #ffffff;
         }
 
-        /* Fundo de estrelas */
-        #canvas-stars {
-            position: fixed;
+        #spaceCanvas {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -30,205 +29,230 @@
             z-index: 1;
         }
 
-        /* Galáxia / Buraco negro central */
-        .galaxy-container {
+        .content-layer {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 300px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: 2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             pointer-events: none;
         }
 
-        .black-hole {
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(150,200,255,0.8) 30%, rgba(20,20,40,0.9) 60%, rgba(0,0,0,1) 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 40px 15px rgba(200, 220, 255, 0.4);
-            animation: rotateGalaxy 10s linear infinite;
-        }
-
-        @keyframes rotateGalaxy {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Coração de texto no topo */
-        .heart-title {
+        /* Texto "Te amo" no centro do coração */
+        .title-text {
             position: absolute;
-            top: 15%;
+            top: 31%;
             left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            z-index: 3;
-            font-size: 2rem;
-            color: #ffb6c1;
-            text-shadow: 0 0 15px rgba(255, 182, 193, 0.8);
-            font-weight: bold;
-            animation: pulseHeart 2s infinite alternate;
+            transform: translate(-50%, -50%);
+            font-size: 1.8rem;
+            font-weight: 700;
+            font-style: italic;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 0 0 20px rgba(255, 255, 255, 0.6);
+            font-family: 'Times New Roman', serif;
+            letter-spacing: 1px;
+            pointer-events: auto;
         }
 
-        @keyframes pulseHeart {
-            0% { transform: translateX(-50%) scale(1); text-shadow: 0 0 10px rgba(255,182,193,0.6); }
-            100% { transform: translateX(-50%) scale(1.08); text-shadow: 0 0 25px rgba(255,182,193,1); }
-        }
-
-        /* Frases "Eu te amo" flutuantes espalhadas */
-        .floating-text {
+        /* Fotos Pequenas idênticas ao vídeo */
+        .small-photo {
             position: absolute;
-            z-index: 3;
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.85);
-            background: rgba(255, 192, 203, 0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 192, 203, 0.3);
-            animation: floatAround 6s ease-in-out infinite alternate;
-            user-select: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+            pointer-events: auto;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .floating-text:hover {
-            transform: scale(1.2);
-            color: #fff;
-            background: rgba(255, 105, 180, 0.4);
+        .small-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
-        @keyframes floatAround {
-            0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-15px) rotate(3deg); }
-        }
-
-        /* Código decorativo inferior (igual ao vídeo) */
-        .code-box {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #111b21;
-            border: 1px solid #22303c;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem;
-            color: #00ffcc;
+        .small-photo:hover {
+            transform: scale(1.4);
             z-index: 10;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 90%;
-            max-width: 350px;
         }
 
-        .code-header {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
+        /* Textos e Tags Flutuantes */
+        .love-tag {
+            position: absolute;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+            pointer-events: auto;
+            user-select: none;
+            white-space: nowrap;
+            font-weight: 500;
         }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .dot-red { background: #ff5f56; }
-        .dot-yellow { background: #ffbd2e; }
-        .dot-green { background: #27c93f; }
     </style>
 </head>
 <body>
 
-    <!-- Fundo de Estrelas Animadas -->
-    <canvas id="canvas-stars"></canvas>
+    <canvas id="spaceCanvas"></canvas>
 
-    <!-- Título de Coração -->
-    <div class="heart-title">Te amo ❤️</div>
+    <div class="content-layer">
+        <div class="title-text">Te amo</div>
 
-    <!-- Buraco Negro / Galáxia Central -->
-    <div class="galaxy-container">
-        <div class="black-hole"></div>
-    </div>
-
-    <!-- Vários "Eu te amo" espalhados pela tela -->
-    <div class="floating-text" style="top: 25%; left: 15%; animation-delay: 0s;">Eu te amo</div>
-    <div class="floating-text" style="top: 30%; right: 18%; animation-delay: 1s;">EU TE AMO</div>
-    <div class="floating-text" style="top: 50%; left: 8%; animation-delay: 2s;">Te amo muito</div>
-    <div class="floating-text" style="top: 65%; right: 12%; animation-delay: 1.5s;">Sempre eu te amo</div>
-    <div class="floating-text" style="top: 75%; left: 20%; animation-delay: 0.5s;">Meu amor, eu te amo</div>
-    <div class="floating-text" style="top: 45%; right: 15%; animation-delay: 2.5s;">Te amo ❤️</div>
-    <div class="floating-text" style="top: 20%; left: 40%; animation-delay: 1.8s;">Para sempre eu te amo</div>
-    <div class="floating-text" style="bottom: 25%; left: 35%; animation-delay: 1.2s;">Eu te amo demais</div>
-
-    <!-- Bloco de código estético idêntico ao vídeo -->
-    <div class="code-box">
-        <div class="code-header">
-            <div class="dot dot-red"></div>
-            <div class="dot dot-yellow"></div>
-            <div class="dot dot-green"></div>
+        <!-- 5 Fotos pequenas com os nomes exatos -->
+        <div class="small-photo" style="top: 22%; left: 47%;">
+            <img src="IMG_4709_324884.jpg" alt="Foto 1">
         </div>
-        <code>
-            .Para_Ti {<br>
-            &nbsp;&nbsp;position: absolute;<br>
-            &nbsp;&nbsp;width: 90%;<br>
-            &nbsp;&nbsp;font-size: 2rem;<br>
-            &nbsp;&nbsp;font-family: "Te Amo";<br>
-            }
-        </code>
+        <div class="small-photo" style="top: 35%; right: 22%;">
+            <img src="IMG_4708_324884.jpg" alt="Foto 2">
+        </div>
+        <div class="small-photo" style="top: 42%; left: 28%;">
+            <img src="IMG_4710_324884.jpg" alt="Foto 3">
+        </div>
+        <div class="small-photo" style="top: 41%; right: 38%;">
+            <img src="IMG_4706_324884.jpg" alt="Foto 4">
+        </div>
+        <div class="small-photo" style="top: 50%; left: 45%;">
+            <img src="IMG_4707_324884.jpg" alt="Foto 5">
+        </div>
+
+        <!-- Frases do print -->
+        <div class="love-tag" style="top: 39%; left: 39%;">Mi Amor</div>
+        <div class="love-tag" style="top: 40%; right: 30%;">Te Amo</div>
+        <div class="love-tag" style="top: 46%; left: 19%;">Me encantas</div>
+        <div class="love-tag" style="top: 48%; right: 17%;">Siempre juntos</div>
+        <div class="love-tag" style="top: 57%; left: 2%; font-size: 0.85rem;">Amor de mi vida</div>
+        <div class="love-tag" style="top: 33%; left: 7%;">Eres preciosa</div>
+        <div class="love-tag" style="top: 24%; right: 9%;">Eres mi sol</div>
+        <div class="love-tag" style="bottom: 22%; left: 46%;">Eu te amo ❤️</div>
     </div>
 
     <script>
-        // Script para gerar as estrelas no fundo dinamicamente
-        const canvas = document.getElementById('canvas-stars');
+        const canvas = document.getElementById('spaceCanvas');
         const ctx = canvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        let width, height, centerX, centerY;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            centerX = width / 2;
+            centerY = height / 2;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', resize);
+        resize();
 
+        // 1. Estrelas de fundo
         const stars = [];
-        const numStars = 150;
-
-        for (let i = 0; i < numStars; i++) {
+        for (let i = 0; i < 400; i++) {
             stars.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5,
-                alpha: Math.random(),
-                speed: Math.random() * 0.02 + 0.005
+                x: Math.random() * width,
+                y: Math.random() * height,
+                size: Math.random() * 1.4,
+                alpha: Math.random()
             });
         }
 
-        function animateStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#ffffff';
+        // 2. Galáxia Espiral Central
+        let galaxyRotation = 0;
+
+        // 3. Coração de Poeira
+        const heartParticles = [];
+        const numHeartParticles = 1400;
+
+        for (let i = 0; i < numHeartParticles; i++) {
+            const t = Math.PI * 2 * (i / numHeartParticles);
+            let hx = 16 * Math.pow(Math.sin(t), 3);
+            let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
             
-            stars.forEach(star => {
+            hx += (Math.random() - 0.5) * 2.5;
+            hy += (Math.random() - 0.5) * 2.5;
+
+            const scale = Math.min(width, height) * 0.0085;
+
+            heartParticles.push({
+                baseX: hx * scale,
+                baseY: hy * scale - (height * 0.18),
+                size: Math.random() * 1.5 + 0.3,
+                alpha: Math.random() * 0.8 + 0.2
+            });
+        }
+
+        function drawSpiralGalaxy(cx, cy, rotation) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(rotation);
+            ctx.scale(1.8, 0.6); // Achatamento para efeito 3D de perspectiva
+
+            const arms = 2;
+            const particlesPerArm = 1000;
+
+            for (let a = 0; a < arms; a++) {
+                const armOffset = a * Math.PI;
+                for (let i = 0; i < particlesPerArm; i++) {
+                    const dist = Math.pow(i / particlesPerArm, 1.5) * (Math.min(width, height) * 0.16);
+                    const angle = armOffset + dist * 0.04;
+                    
+                    const spreadX = (Math.random() - 0.5) * (dist * 0.35 + 4);
+                    const spreadY = (Math.random() - 0.5) * (dist * 0.35 + 4);
+
+                    const x = Math.cos(angle) * dist + spreadX;
+                    const y = Math.sin(angle) * dist + spreadY;
+
+                    const alpha = (1 - (dist / (Math.min(width, height) * 0.16))) * 0.8;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.05, alpha)})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.random() * 1.3 + 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            // Brilho do Núcleo
+            const coreGlow = ctx.createRadialGradient(0, 0, 0, 0, 0, 35);
+            coreGlow.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+            coreGlow.addColorStop(0.4, 'rgba(230, 240, 255, 0.6)');
+            coreGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = coreGlow;
+            ctx.beginPath();
+            ctx.arc(0, 0, 35, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function animate() {
+            ctx.fillStyle = '#030208';
+            ctx.fillRect(0, 0, width, height);
+
+            // Desenhar estrelas
+            ctx.fillStyle = '#ffffff';
+            for (let star of stars) {
                 ctx.globalAlpha = star.alpha;
                 ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
                 ctx.fill();
+            }
 
-                // Efeito de brilho piscando
-                star.alpha += star.speed;
-                if (star.alpha > 1 || star.alpha < 0.2) {
-                    star.speed = -star.speed;
-                }
-            });
+            // Desenhar Galáxia Espiral
+            galaxyRotation += 0.003;
+            drawSpiralGalaxy(centerX, centerY + (height * 0.08), galaxyRotation);
 
-            requestAnimationFrame(animateStars);
+            // Desenhar Coração
+            for (let hp of heartParticles) {
+                ctx.fillStyle = '#ffffff';
+                ctx.globalAlpha = hp.alpha;
+                ctx.beginPath();
+                ctx.arc(centerX + hp.baseX, centerY + hp.baseY, hp.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(animate);
         }
 
-        animateStars();
+        animate();
     </script>
 </body>
 </html>
